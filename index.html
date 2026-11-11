@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ôn thi Giữa kì 1 Địa lí 8 KNTT - Trắc nghiệm tương tác</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #121417;
+      color: #f1f5f9;
+      -webkit-tap-highlight-color: transparent;
+    }
+    /* Thanh cuộn tinh chỉnh dark theme */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #121417;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2b303b;
+      border-radius: 9999px;
+    }
+    /* Smooth transitions */
+    .option-card {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+  <!-- Header / Navigation bar giống hệt ứng dụng trong hình -->
+  <header class="w-full max-w-4xl mx-auto px-4 pt-4 pb-2">
+    <!-- Top row: Tiêu đề + icon Share & Close -->
+    <div class="flex items-center justify-between py-2 text-slate-300">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-600/20 text-blue-400 text-xs font-bold">8</span>
+        <h1 class="text-sm md:text-base font-semibold tracking-wide text-slate-200 line-clamp-1">
+          Ôn tập Địa lí 8 KNTT: Chương 1 & Đề cương r1, r2
+        </h1>
+      </div>
+      <div class="flex items-center gap-3 text-slate-400">
+        <!-- Nút Reset / Làm lại nhanh trực tiếp trên thanh công cụ -->
+        <button id="btnQuickRestart" title="Làm lại từ đầu" class="p-2 hover:text-white hover:bg-slate-800 rounded-full transition flex items-center gap-1 text-xs font-medium">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          <span class="hidden sm:inline">Làm lại</span>
+        </button>
+        <!-- Nút Share (Sao chép link) -->
+        <button id="btnShare" title="Chia sẻ bài tập" class="p-2 hover:text-white hover:bg-slate-800 rounded-full transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+          </svg>
+        </button>
+        <!-- Nút Close / Reset -->
+        <button id="btnClose" title="Làm lại từ đầu" class="p-2 hover:text-white hover:bg-slate-800 rounded-full transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Thanh tiến trình và bộ đếm ĐÚNG / SAI -->
+    <div class="flex items-center gap-3 sm:gap-4 mt-2">
+      <!-- Progress Bar Tracker -->
+      <div class="relative flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+        <div id="progressBar" class="h-full bg-slate-400 rounded-full transition-all duration-300" style="width: 5%;"></div>
+      </div>
+
+      <!-- Số thứ tự câu -->
+      <div class="text-xs sm:text-sm font-semibold text-slate-300 min-w-[42px] text-center" id="questionCounter">
+        1/20
+      </div>
+
+      <!-- Counter Sai (màu đỏ giống mẫu) -->
+      <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#34171c] text-[#f87171] text-xs sm:text-sm font-bold border border-red-900/40">
+        <svg class="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+        <span id="wrongCount">0</span>
+      </div>
+
+      <!-- Counter Đúng (màu xanh lá giống mẫu) -->
+      <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#112d1e] text-[#4ade80] text-xs sm:text-sm font-bold border border-emerald-900/40">
+        <svg class="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span id="correctCount">0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Vùng nội dung chính: Câu hỏi và 4 lựa chọn -->
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-4 flex flex-col justify-center">
+    <!-- Hộp thông báo toast ngắn khi bấm share -->
+    <div id="toast" class="hidden fixed top-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-slate-800 text-slate-100 text-sm rounded-lg shadow-xl border border-slate-700">
+      Đã sao chép liên kết ôn tập vào clipboard!
+    </div>
+
+    <!-- Khối Quiz hiển thị -->
+    <div id="quizContainer" class="w-full">
+      <!-- Tiêu đề câu hỏi -->
+      <div class="mb-5 sm:mb-7">
+        <div class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1" id="questionCategory">
+          Địa lí 8 • Bài 1: Vị trí & Lãnh thổ
+        </div>
+        <div id="questionTitle" class="text-lg sm:text-xl md:text-2xl font-semibold text-white leading-relaxed">
+          Đang tải câu hỏi...
+        </div>
+      </div>
+
+      <!-- 4 lựa chọn đáp án -->
+      <div id="optionsContainer" class="space-y-3">
+        <!-- Được render tự động qua JavaScript -->
+      </div>
+    </div>
+
+    <!-- Màn hình hoàn thành (ẩn ban đầu) -->
+    <div id="resultCard" class="hidden bg-[#181b20] border border-slate-800 rounded-2xl p-6 sm:p-8 text-center max-w-lg mx-auto w-full my-6">
+      <div class="w-16 h-16 rounded-full bg-blue-600/20 text-blue-400 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+        🎉
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">Hoàn thành bài ôn luyện!</h2>
+      <p class="text-slate-400 text-sm mb-6" id="resultSubtitle">Bạn đã hoàn thành 30 câu trắc nghiệm trọng tâm Địa lí 8 - Chương 1 Kết nối tri thức.</p>
+      
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-[#12291d] border border-emerald-900/60 p-4 rounded-xl">
+          <div class="text-2xl font-extrabold text-[#4ade80]" id="finalCorrect">0</div>
+          <div class="text-xs text-slate-300 font-medium mt-1">Câu trả lời đúng</div>
+        </div>
+        <div class="bg-[#2b1418] border border-red-900/60 p-4 rounded-xl">
+          <div class="text-2xl font-extrabold text-[#f87171]" id="finalWrong">0</div>
+          <div class="text-xs text-slate-300 font-medium mt-1">Câu trả lời sai</div>
+        </div>
+      </div>
+
+      <div class="bg-[#121417] p-4 rounded-xl border border-slate-800/80 mb-6 text-left text-sm text-slate-300">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-semibold text-white block" id="evalTitle">Đánh giá kết quả:</span>
+          <span class="font-bold text-blue-400 text-xs px-2 py-0.5 rounded bg-blue-900/40" id="finalPercentage">0%</span>
+        </div>
+        <span id="evalDesc">Hãy xem lại các câu trả lời sai bên trên để củng cố kiến thức trước khi bước vào kì thi nhé!</span>
+      </div>
+
+      <!-- Khối nút bấm làm lại sau khi kết thúc -->
+      <div class="flex flex-col gap-3">
+        <!-- Nút Luyện lại riêng các câu sai (chỉ hiện khi có câu sai) -->
+        <button id="btnRetryWrong" class="hidden w-full py-3.5 px-6 rounded-xl bg-[#2b1418] border border-red-800/80 hover:bg-[#38191e] font-semibold text-[#fca5a5] transition flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+          Luyện lại riêng các câu làm sai (<span id="wrongRetryCount">0</span> câu)
+        </button>
+
+        <!-- Nút Làm lại toàn bộ 30 câu từ đầu -->
+        <button id="btnRestart" class="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-500 font-semibold text-white transition shadow-lg shadow-blue-900/30 flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Làm lại toàn bộ từ đầu
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Navigation: Nút Quay lại & Tiếp theo y như ảnh mẫu -->
+  <footer id="footerNav" class="w-full max-w-4xl mx-auto px-4 py-4 flex items-center justify-end gap-3 border-t border-slate-800/80">
+    <button id="btnPrev" class="px-5 py-2.5 rounded-xl bg-[#1e232a] hover:bg-[#282f38] text-slate-300 font-medium text-sm transition flex items-center gap-1.5 disabled:opacity-30 disabled:cursor-not-allowed">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      Quay lại
+    </button>
+    
+    <button id="btnNext" class="px-6 py-2.5 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold text-sm transition shadow-lg shadow-blue-900/30 flex items-center gap-1.5">
+      Tiếp theo
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+  </footer>
+
+  <!-- Dữ liệu 30 câu hỏi trọng tâm chuẩn Địa lí 8 KNTT (Đã loại bỏ mọi cụm từ tham chiếu) -->
+  <script>
+    const quizData = [
+      {
+        id: 1,
+        category: "Vị trí địa lí & Phạm vi lãnh thổ",
+        question: "Phần đất liền nước ta tiếp giáp với những quốc gia nào sau đây?",
+        options: [
+          { key: "A", text: "Trung Quốc, Thái Lan, Mi-an-ma." },
+          { key: "B", text: "Trung Quốc, Lào, Cam-pu-chia." },
+          { key: "C", text: "Lào, Thái Lan, Cam-pu-chia." },
+          { key: "D", text: "Trung Quốc, Cam-pu-chia, Ma-lai-xi-a." }
+        ],
+        correctKey: "B",
+        explain: "Việt Nam có chung đường biên giới trên đất liền với ba quốc gia: phía bắc giáp Trung Quốc, phía tây giáp Lào và Cam-pu-chia."
+      },
+      {
+        id: 2,
+        category: "Vị trí địa lí & Phạm vi lãnh thổ",
+        question: "Tổng diện tích phần đất liền của nước ta (bao gồm cả các đảo, quần đảo) là bao nhiêu?",
+        options: [
+          { key: "A", text: "331 212 km²." },
+          { key: "B", text: "313 212 km²." },
+          { key: "C", text: "332 112 km²." },
+          { key: "D", text: "321 312 km²." }
+        ],
+        correctKey: "A",
+        explain: "Vùng đất Việt Nam gồm toàn bộ phần đất liền và các đảo, quần đảo trên Biển Đông với tổng diện tích là 331 212 km²."
+      },
+      {
+        id: 3,
+        category: "Vị trí địa lí & Phạm vi lãnh thổ",
+        question: "Vùng biển thuộc chủ quyền của Việt Nam trên Biển Đông có diện tích khoảng bao nhiêu?",
+        options: [
+          { key: "A", text: "Khoảng 0,5 triệu km²." },
+          { key: "B", text: "Khoảng 1 triệu km²." },
+          { key: "C", text: "Khoảng 2 triệu km²." },
+          { key: "D", text: "Khoảng 3,2 triệu km²." }
+        ],
+        correctKey: "B",
+        explain: "Vùng biển Việt Nam có diện tích khoảng 1 triệu km², rộng gấp hơn 3 lần diện tích đất liền và chiếm gần 30% diện tích Biển Đông."
+      },
+      {
+        id: 4,
+        category: "Vị trí địa lí & Phạm vi lãnh thổ",
+        question: "Đường bờ biển của nước ta có chiều dài là bao nhiêu và kéo dài từ đâu đến đâu?",
+        options: [
+          { key: "A", text: "Dài 3 260 km, từ Móng Cái (Quảng Ninh) đến Hà Tiên (Kiên Giang)." },
+          { key: "B", text: "Dài 4 600 km, từ Hải Phòng đến Cà Mau." },
+          { key: "C", text: "Dài 2 360 km, từ Quảng Ninh đến Bà Rịa - Vũng Tàu." },
+          { key: "D", text: "Dài 3 450 km, từ Lạng Sơn đến Kiên Giang." }
+        ],
+        correctKey: "A",
+        explain: "Bờ biển nước ta uốn cong hình chữ S, dài 3 260 km chạy từ Móng Cái (Quảng Ninh) ở phía bắc đến Hà Tiên (Kiên Giang) ở phía tây nam."
+      },
+      {
+        id: 5,
+        category: "Vị trí địa lí & Phạm vi lãnh thổ",
+        question: "Hai quần đảo xa bờ Hoàng Sa và Trường Sa lần lượt thuộc quyền quản lí hành chính của tỉnh, thành phố nào?",
+        options: [
+          { key: "A", text: "Thành phố Đà Nẵng và tỉnh Khánh Hoà." },
+          { key: "B", text: "Tỉnh Quảng Nam và tỉnh Bà Rịa - Vũng Tàu." },
+          { key: "C", text: "Tỉnh Quảng Ngãi và tỉnh Bình Thuận." },
+          { key: "D", text: "Thành phố Hải Phòng và tỉnh Kiên Giang." }
+        ],
+        correctKey: "A",
+        explain: "Quần đảo Hoàng Sa trực thuộc thành phố Đà Nẵng (huyện đảo Hoàng Sa) và quần đảo Trường Sa trực thuộc tỉnh Khánh Hoà (huyện đảo Trường Sa)."
+      },
+      {
+        id: 6,
+        category: "Ý nghĩa của vị trí địa lí",
+        question: "Nước ta có khí hậu nhiệt đới ẩm gió mùa, thiên nhiên chịu ảnh hưởng sâu sắc của biển là do nguyên nhân chủ yếu nào?",
+        options: [
+          { key: "A", text: "Nằm hoàn toàn ở khu vực nội chí tuyến bán cầu Bắc, giáp vùng biển kín." },
+          { key: "B", text: "Lãnh thổ hẹp ngang, kéo dài, tiếp giáp với Biển Đông rộng lớn có nguồn dự trữ ẩm dồi dào." },
+          { key: "C", text: "Địa hình chủ yếu là núi cao đồ sộ chắn toàn bộ gió mùa." },
+          { key: "D", text: "Nằm ở trung tâm lục địa Á - Âu, xa các đại dương lớn." }
+        ],
+        correctKey: "B",
+        explain: "Lãnh thổ hẹp ngang và kéo dài qua nhiều vĩ độ, lại nằm kề Biển Đông là bể ẩm khổng lồ nên các khối khí đi qua biển được tăng cường lượng ẩm, làm thiên nhiên nước ta xanh tốt khác hẳn các vùng hoang mạc cùng vĩ độ ở Tây Á, Bắc Phi."
+      },
+      {
+        id: 7,
+        category: "Ý nghĩa của vị trí địa lí",
+        question: "Vị trí địa lí mang lại thuận lợi kinh tế nổi bật nào cho nước ta trong giao lưu và hội nhập quốc tế?",
+        options: [
+          { key: "A", text: "Là trạm trung chuyển khí tài quân sự quốc tế ở Thái Bình Dương." },
+          { key: "B", text: "Nằm trên ngã tư hàng hải, hàng không quốc tế; là cửa ngõ ra biển thuận lợi cho Lào, Đông Bắc Campuchia và Đông Bắc Thái Lan." },
+          { key: "C", text: "Tài nguyên khoáng sản kim loại màu có trữ lượng lớn nhất thế giới." },
+          { key: "D", text: "Hoàn toàn không chịu ảnh hưởng của bão và biến đổi khí hậu biển." }
+        ],
+        correctKey: "B",
+        explain: "Việt Nam nằm ở cầu nối giữa Đông Nam Á lục địa và hải đảo, trên ngã tư đường giao thông quốc tế và là cửa ngõ ra biển Đông của các nước láng giềng nội địa, rất thuận lợi phát triển kinh tế biển và thu hút đầu tư."
+      },
+      {
+        id: 8,
+        category: "Đặc điểm chung địa hình Việt Nam",
+        question: "Đặc điểm cơ bản nhất của địa hình nước ta là:",
+        options: [
+          { key: "A", text: "Địa hình đồng bằng chiếm phần lớn diện tích lãnh thổ." },
+          { key: "B", text: "Đồi núi chiếm ưu thế (chiếm 3/4 diện tích), nhưng chủ yếu là đồi núi thấp dưới 1 000 m." },
+          { key: "C", text: "Chủ yếu là các dãy núi cao trên 2 000 m hiểm trở và chia cắt sâu." },
+          { key: "D", text: "Địa hình cổ bị san phẳng hoàn toàn thành các bề mặt đơn điệu." }
+        ],
+        correctKey: "B",
+        explain: "Đồi núi chiếm 3/4 diện tích phần đất liền nhưng có tới 85% diện tích là đồi núi thấp dưới 1 000 m; địa hình núi cao trên 2 000 m chỉ chiếm 1% diện tích cả nước."
+      },
+      {
+        id: 9,
+        category: "Đặc điểm chung địa hình Việt Nam",
+        question: "Tỉ lệ diện tích giữa địa hình đồi núi và địa hình đồng bằng ở phần đất liền nước ta lần lượt là:",
+        options: [
+          { key: "A", text: "1/2 đồi núi và 1/2 đồng bằng." },
+          { key: "B", text: "2/3 đồi núi và 1/3 đồng bằng." },
+          { key: "C", text: "3/4 đồi núi và 1/4 đồng bằng." },
+          { key: "D", text: "4/5 đồi núi và 1/5 đồng bằng." }
+        ],
+        correctKey: "C",
+        explain: "Địa hình đồi núi chiếm 3/4 diện tích lãnh thổ đất liền; đồng bằng chỉ chiếm 1/4 diện tích (gồm Đồng bằng sông Hồng, sông Cửu Long và dải đồng bằng Duyên hải miền Trung)."
+      },
+      {
+        id: 10,
+        category: "Đặc điểm chung địa hình Việt Nam",
+        question: "Hai hướng chính của cấu trúc địa hình nước ta là:",
+        options: [
+          { key: "A", text: "Bắc - nam và đông - tây." },
+          { key: "B", text: "Tây bắc - đông nam và hướng vòng cung." },
+          { key: "C", text: "Đông bắc - tây nam và hướng tâm." },
+          { key: "D", text: "Hướng song song và hướng kinh tuyến." }
+        ],
+        correctKey: "B",
+        explain: "Hướng tây bắc - đông nam thể hiện rõ ở vùng Tây Bắc, Trường Sơn Bắc; hướng vòng cung thể hiện rõ nhất ở vùng đồi núi Đông Bắc và Trường Sơn Nam."
+      },
+      {
+        id: 11,
+        category: "Đặc điểm chung địa hình Việt Nam",
+        question: "Nhóm dãy núi nào sau đây chạy theo hướng tây bắc - đông nam?",
+        options: [
+          { key: "A", text: "Sông Gâm, Ngân Sơn, Bắc Sơn." },
+          { key: "B", text: "Hoàng Liên Sơn, Trường Sơn Bắc, dãy Con Voi." },
+          { key: "C", text: "Đông Triều, Bạch Mã, Nam Cát Tiên." },
+          { key: "D", text: "Tam Đảo, Mẫu Sơn, Ngân Sơn." }
+        ],
+        correctKey: "B",
+        explain: "Dãy Hoàng Liên Sơn, Trường Sơn Bắc và dãy Con Voi là các dãy núi điển hình chạy song song theo hướng tây bắc - đông nam."
+      },
+      {
+        id: 12,
+        category: "Đặc điểm chung địa hình Việt Nam",
+        question: "Địa hình có tính chất phân bậc rõ rệt thành đồi núi, đồng bằng, thềm lục địa là do kết quả của:",
+        options: [
+          { key: "A", text: "Tác động nâng cao của vận động Tân kiến tạo (vận động tạo núi Hi-ma-lay-a)." },
+          { key: "B", text: "Quá trình lắng đọng trầm tích phù sa qua hàng triệu năm." },
+          { key: "C", text: "Hoạt động xâm thực mài mòn mạnh của sóng biển cổ." },
+          { key: "D", text: "Hoạt động cải tạo đất và xây dựng công trình của con người." }
+        ],
+        correctKey: "A",
+        explain: "Sau thời kì cổ kiến tạo bị san bằng, vận động tạo núi Hi-ma-lay-a (Tân kiến tạo) đã làm địa hình nước ta trẻ lại, nâng cao không đều và phân thành các bậc lớn nhỏ kế tiếp nhau."
+      },
+      {
+        id: 13,
+        category: "Đặc điểm chung địa hình Việt Nam",
+        question: "Trong điều kiện nhiệt đới ẩm gió mùa, hiện tượng xâm thực mạnh ở vùng đồi núi đá vôi đã hình thành dạng địa hình độc đáo nào?",
+        options: [
+          { key: "A", text: "Địa hình cồn cát bãi triều ven biển." },
+          { key: "B", text: "Địa hình các-xtơ nhiệt đới với nhiều hang động kì vĩ." },
+          { key: "C", text: "Địa hình bán bình nguyên đồi bát úp." },
+          { key: "D", text: "Địa hình tam giác châu bồi tụ phù sa." }
+        ],
+        correctKey: "B",
+        explain: "Nước mưa chứa CO2 hòa tan mạnh đá vôi tạo thành dạng địa hình các-xtơ độc đáo với các đỉnh nhọn, tháp karst và hệ thống hang động ngầm kì thú (Phong Nha, Hạ Long...)."
+      },
+      {
+        id: 14,
+        category: "Khu vực địa hình: Vùng núi Đông Bắc",
+        question: "Đặc điểm nổi bật nhất của địa hình vùng núi Đông Bắc là:",
+        options: [
+          { key: "A", text: "Địa hình cao hiểm trở nhất nước ta, nhiều đỉnh trên 3 000 m." },
+          { key: "B", text: "Địa hình chủ yếu là đồi núi thấp với 4 cánh cung núi lớn mở rộng về phía bắc và đông bắc." },
+          { key: "C", text: "Gồm các dãy núi chạy song song và so le nhau theo hướng tây bắc - đông nam." },
+          { key: "D", text: "Là các cao nguyên đất đỏ badan rộng lớn xếp tầng liên tiếp." }
+        ],
+        correctKey: "B",
+        explain: "Vùng núi Đông Bắc nằm ở tả ngạn sông Hồng, chủ yếu là đồi núi thấp, đặc trưng bởi 4 cánh cung lớn: Sông Gâm, Ngân Sơn, Bắc Sơn, Đông Triều tụm đầu ở Tam Đảo."
+      },
+      {
+        id: 15,
+        category: "Khu vực địa hình: Vùng núi Tây Bắc",
+        question: "Đỉnh núi nào cao nhất Việt Nam và được mệnh danh là 'Nóc nhà Đông Dương'?",
+        options: [
+          { key: "A", text: "Đỉnh Tây Côn Lĩnh (2 419 m)." },
+          { key: "B", text: "Đỉnh Phan-xi-păng (3 143 m)." },
+          { key: "C", text: "Đỉnh Ngọc Linh (2 598 m)." },
+          { key: "D", text: "Đỉnh Pu Xai Lai Leng (2 711 m)." }
+        ],
+        correctKey: "B",
+        explain: "Đỉnh Phan-xi-păng thuộc dãy núi Hoàng Liên Sơn (Tây Bắc) có độ cao 3 143 m, là đỉnh núi cao nhất Việt Nam và toàn bán đảo Đông Dương."
+      },
+      {
+        id: 16,
+        category: "Khu vực địa hình: Vùng núi Trường Sơn Bắc",
+        question: "Vùng núi Trường Sơn Bắc có giới hạn từ đâu đến đâu?",
+        options: [
+          { key: "A", text: "Từ hữu ngạn sông Hồng đến sông Mã." },
+          { key: "B", text: "Từ phía nam sông Cả tới dãy Bạch Mã." },
+          { key: "C", text: "Từ dãy Bạch Mã đến cao nguyên Di Linh." },
+          { key: "D", text: "Từ sông Đà đến đèo Hải Vân." }
+        ],
+        correctKey: "B",
+        explain: "Vùng núi Trường Sơn Bắc kéo dài khoảng 600 km từ phía nam sông Cả đến dãy Bạch Mã, địa hình chạy theo hướng tây bắc - đông nam."
+      },
+      {
+        id: 17,
+        category: "Khu vực địa hình: Vùng núi Trường Sơn Nam",
+        question: "Dạng địa hình nổi bật và chiếm diện tích lớn ở vùng núi Trường Sơn Nam là gì?",
+        options: [
+          { key: "A", text: "Các thung lũng đá vôi ngập nước dạng karst." },
+          { key: "B", text: "Hệ thống các cao nguyên badan rộng lớn xếp tầng (Kon Tum, Pleiku, Đắk Lắk, Lâm Viên...)." },
+          { key: "C", text: "Các đồi bát úp xen kẽ dải cồn cát ven biển." },
+          { key: "D", text: "Địa hình núi đá cao trên 3 000 m chạy dài san sát." }
+        ],
+        correctKey: "B",
+        explain: "Vùng núi Trường Sơn Nam nổi bật với cấu trúc bất đối xứng: sườn đông dốc sát biển, sườn tây thoải hình thành các cao nguyên badan màu mỡ xếp tầng cao thấp khác nhau."
+      },
+      {
+        id: 18,
+        category: "Khu vực địa hình: Đồng bằng châu thổ",
+        question: "Điểm khác biệt căn bản trong cấu trúc đê điều giữa Đồng bằng sông Hồng và Đồng bằng sông Cửu Long là gì?",
+        options: [
+          { key: "A", text: "Đồng bằng sông Cửu Long có hệ thống đê biển dài hơn 3 000 km." },
+          { key: "B", text: "Đồng bằng sông Hồng có hệ thống đê sông kiên cố ngăn lũ, chia cắt mặt đồng bằng thành nhiều ô trũng." },
+          { key: "C", text: "Đồng bằng sông Hồng không có đê, đất được bồi tụ phù sa tự nhiên hằng năm khắp bề mặt." },
+          { key: "D", text: "Đồng bằng sông Cửu Long đắp đê ngăn lũ triệt để ở tất cả các vùng trũng." }
+        ],
+        correctKey: "B",
+        explain: "Đồng bằng sông Hồng có hệ thống đê ngăn lũ dài, chia cắt mặt đồng bằng thành các ô trũng (khu vực trong đê không được bồi đắp phù sa hằng năm). Ngược lại, Đồng bằng sông Cửu Long không có đê lớn ngăn lũ mà sống chung với lũ."
+      },
+      {
+        id: 19,
+        category: "Khu vực địa hình: Đồng bằng châu thổ",
+        question: "Đặc điểm địa hình của Đồng bằng sông Cửu Long là:",
+        options: [
+          { key: "A", text: "Địa hình cao, bề mặt chia cắt thành các bậc thềm phù sa cổ." },
+          { key: "B", text: "Địa hình thấp và bằng phẳng, mạng lưới kênh rạch chằng chịt, mùa lũ ngập trên diện rộng." },
+          { key: "C", text: "Bị đồi núi đâm ngang chia cắt thành nhiều đồng bằng nhỏ hẹp." },
+          { key: "D", text: "Chủ yếu là các đụn cát, cồn cát di động lấn chiếm đất liền." }
+        ],
+        correctKey: "B",
+        explain: "Đồng bằng sông Cửu Long có diện tích trên 40 000 km², địa hình thấp và phẳng, có nhiều ô trũng lớn (Đồng Tháp Mười, Tứ giác Long Xuyên) bị ngập nước sâu vào mùa lũ."
+      },
+      {
+        id: 20,
+        category: "Khu vực địa hình: Đồng bằng ven biển",
+        question: "Dải đồng bằng duyên hải miền Trung có đặc điểm nổi bật nào sau đây?",
+        options: [
+          { key: "A", text: "Rộng lớn, màu mỡ do phù sa sông Mê Công bồi đắp." },
+          { key: "B", text: "Nhỏ hẹp, bị các nhánh núi đâm ngang sát biển chia cắt thành nhiều đồng bằng nhỏ." },
+          { key: "C", text: "Có hệ thống đê ngăn lũ quy mô lớn nhất nước ta." },
+          { key: "D", text: "Bề mặt bằng phẳng tuyệt đối, không có cồn cát hay đầm phá ven biển." }
+        ],
+        correctKey: "B",
+        explain: "Đồng bằng duyên hải miền Trung có tổng diện tích khoảng 15 000 km², hẹp ngang, bị các nhánh núi đâm ra biển chia cắt (như Hoành Sơn, Bạch Mã), đất nhiều cát ít phù sa."
+      },
+      {
+        id: 21,
+        category: "Địa hình bờ biển & Thềm lục địa",
+        question: "Bờ biển mài mòn ở nước ta khúc khuỷu, nhiều vũng vịnh sâu và kín gió có giá trị kinh tế nổi bật là:",
+        options: [
+          { key: "A", text: "Xây dựng các cảng biển nước sâu và phát triển giao thông vận tải biển." },
+          { key: "B", text: "Phát triển vùng chuyên canh lúa nước quy mô lớn." },
+          { key: "C", text: "Trồng các đồn điền cao su và cà phê tập trung." },
+          { key: "D", text: "Khai thác đá phiến sét phục vụ sản xuất xi măng trên diện rộng." }
+        ],
+        correctKey: "A",
+        explain: "Bờ biển mài mòn khúc khuỷu có nhiều vũng, vịnh nước sâu (như vịnh Vân Phong, vịnh Cam Ranh, Dung Quất...) rất thuận lợi xây dựng hệ thống cảng nước sâu đón tàu tải trọng lớn."
+      },
+      {
+        id: 22,
+        category: "Địa hình bờ biển & Thềm lục địa",
+        question: "Khó khăn và nguy cơ môi trường lớn nhất đối với dải địa hình ven biển nước ta là gì?",
+        options: [
+          { key: "A", text: "Hiện tượng sa mạc hoá phủ kín toàn bộ diện tích đất nông nghiệp cả nước." },
+          { key: "B", text: "Chịu tác động lớn của các cơn bão nhiệt đới, nước dâng và hiện tượng sạt lở bờ biển nghiêm trọng." },
+          { key: "C", text: "Hiện tượng tuyết rơi dày đặc làm đóng băng các cửa sông." },
+          { key: "D", text: "Hiện tượng động đất và sóng thần diễn ra thường xuyên hằng ngày." }
+        ],
+        correctKey: "B",
+        explain: "Vùng ven biển nước ta thường xuyên chịu ảnh hưởng trực tiếp của bão, triều cường gây ngập lụt, sạt lở đê biển và bờ biển, đe dọa sinh kế và hệ sinh thái ven bờ."
+      },
+      {
+        id: 23,
+        category: "Tác động của con người đến địa hình",
+        question: "Các công trình nào sau đây là ví dụ tiêu biểu cho dạng địa hình nhân tạo do con người tạo nên?",
+        options: [
+          { key: "A", text: "Các hang động karst ngầm dưới lòng núi đá vôi." },
+          { key: "B", text: "Hệ thống đê ngăn lũ, đập hồ chứa nước thuỷ điện, hầm mỏ khai thác lộ thiên." },
+          { key: "C", text: "Các cồn cát, đụn cát ven biển miền Trung." },
+          { key: "D", text: "Các cao nguyên badan xếp tầng cổ." }
+        ],
+        correctKey: "B",
+        explain: "Con người trong quá trình sản xuất và sinh sống đã tạo ra nhiều dạng địa hình nhân tạo mới như: hệ thống đê sông/đê biển, hồ chứa thuỷ điện (Hoà Bình, Trị An...), moong khai thác than..."
+      },
+      {
+        id: 24,
+        category: "Khoáng sản Việt Nam",
+        question: "Đặc điểm cơ bản của tài nguyên khoáng sản nước ta là:",
+        options: [
+          { key: "A", text: "Chủng loại nghèo nàn, chỉ có khoáng sản phi kim loại." },
+          { key: "B", text: "Khá đa dạng về loại hình, phần lớn các mỏ có quy mô trữ lượng vừa và nhỏ." },
+          { key: "C", text: "Toàn bộ các mỏ khoáng sản đều có trữ lượng khổng lồ hàng đầu thế giới." },
+          { key: "D", text: "Chỉ phân bố tập trung ở vùng đồng bằng châu thổ." }
+        ],
+        correctKey: "B",
+        explain: "Cơ cấu khoáng sản Việt Nam phong phú đa dạng (khoảng 5000 điểm quặng thuộc 60 loại khoáng sản), tuy nhiên phần lớn các mỏ có quy mô trữ lượng vừa và nhỏ."
+      },
+      {
+        id: 25,
+        category: "Khoáng sản Việt Nam",
+        question: "Bể than đá lớn nhất và có giá trị kinh tế cao nhất nước ta phân bố chủ yếu ở tỉnh nào?",
+        options: [
+          { key: "A", text: "Tỉnh Thái Nguyên." },
+          { key: "B", text: "Tỉnh Quảng Ninh." },
+          { key: "C", text: "Tỉnh Lạng Sơn." },
+          { key: "D", text: "Tỉnh Bắc Kạn." }
+        ],
+        correctKey: "B",
+        explain: "Bể than antraxit Quảng Ninh là bể than lớn nhất và có chất lượng tốt nhất cả nước, phục vụ cho nhiệt điện, luyện kim và xuất khẩu."
+      },
+      {
+        id: 26,
+        category: "Khoáng sản Việt Nam",
+        question: "Quặng bô-xít (nguyên liệu sản xuất nhôm) có trữ lượng lớn nhất nước ta tập trung ở khu vực nào?",
+        options: [
+          { key: "A", text: "Khu vực Tây Nguyên." },
+          { key: "B", text: "Vùng núi Đông Bắc." },
+          { key: "C", text: "Đồng bằng sông Hồng." },
+          { key: "D", text: "Đồng bằng duyên hải Nam Trung Bộ." }
+        ],
+        correctKey: "A",
+        explain: "Quặng bô-xít nước ta hình thành từ quá trình phong hoá đất đỏ badan, tập trung với trữ lượng khổng lồ ở Tây Nguyên (Đắk Nông, Lâm Đồng, Gia Lai...)."
+      },
+      {
+        id: 27,
+        category: "Khoáng sản Việt Nam",
+        question: "Khoáng sản năng lượng có giá trị chiến lược đang được khai thác quy mô lớn tại thềm lục địa phía nam là:",
+        options: [
+          { key: "A", text: "Than đá và than nâu." },
+          { key: "B", text: "Dầu mỏ và khí tự nhiên." },
+          { key: "C", text: "Quặng đồng và chì kẽm." },
+          { key: "D", text: "Đá vôi xi măng." }
+        ],
+        correctKey: "B",
+        explain: "Các bể trầm tích ở thềm lục địa phía Nam (bể Cửu Long, Nam Côn Sơn) chứa trữ lượng dầu mỏ và khí đốt tự nhiên lớn, là nguồn năng lượng trọng yếu của quốc gia."
+      },
+      {
+        id: 28,
+        category: "Khoáng sản Việt Nam",
+        question: "Để bảo vệ tài nguyên khoáng sản và phát triển bền vững, giải pháp quan trọng hàng đầu là:",
+        options: [
+          { key: "A", text: "Đẩy mạnh khai thác ồ ạt, tăng cường xuất khẩu thô để thu lợi nhuận nhanh." },
+          { key: "B", text: "Khai thác hợp lí, tiết kiệm, tăng cường chế biến sâu và bảo vệ môi trường mỏ." },
+          { key: "C", text: "Dừng khai thác tất cả các mỏ than và dầu mỏ trên cả nước." },
+          { key: "D", text: "Cho phép các cá nhân tự do đào bới và buôn bán quặng trái phép." }
+        ],
+        correctKey: "B",
+        explain: "Khoáng sản là tài nguyên không thể phục hồi. Do đó cần khai thác hợp lí, tiết kiệm, đầu tư công nghệ chế biến sâu để nâng cao giá trị và xử lí chất thải bảo vệ môi trường."
+      },
+      {
+        id: 29,
+        category: "Ảnh hưởng của địa hình đến tự nhiên",
+        question: "Dãy núi nào đóng vai trò là ranh giới tự nhiên phân chia khí hậu giữa miền Bắc (có mùa đông lạnh) và miền Nam (nóng quanh năm)?",
+        options: [
+          { key: "A", text: "Dãy Hoành Sơn." },
+          { key: "B", text: "Dãy Tam Điệp." },
+          { key: "C", text: "Dãy Bạch Mã." },
+          { key: "D", text: "Dãy Hoàng Liên Sơn." }
+        ],
+        correctKey: "C",
+        explain: "Dãy núi Bạch Mã (vĩ độ 16°B) đâm ngang ra sát biển chặn luồng gió mùa Đông Bắc, tạo nên ranh giới khí hậu rõ rệt giữa miền Bắc (nhiệt đới gió mùa có mùa đông lạnh) và miền Nam (cận xích đạo nóng quanh năm)."
+      },
+      {
+        id: 30,
+        category: "Khai thác kinh tế theo khu vực địa hình",
+        question: "Thế mạnh kinh tế nổi bật của khu vực đồi núi nước ta là gì?",
+        options: [
+          { key: "A", text: "Chuyên canh lúa nước cao sản và nuôi trồng thủy sản nước ngọt trên diện rộng." },
+          { key: "B", text: "Phát triển cây công nghiệp, cây ăn quả, chăn nuôi gia súc lớn, thuỷ điện, khai khoáng và du lịch sinh thái." },
+          { key: "C", text: "Sản xuất muối ăn công nghiệp và xây dựng cảng biển nước sâu." },
+          { key: "D", text: "Tập trung phần lớn các khu đô thị và mạng lưới giao thông dày đặc nhất cả nước." }
+        ],
+        correctKey: "B",
+        explain: "Địa hình đồi núi có đất feralit thích hợp trồng cây công nghiệp (cà phê, cao su, chè...), đồng cỏ nuôi trâu bò ngựa, nguồn thuỷ năng dồi dào trên các dòng sông, tài nguyên rừng và nhiều cảnh quan du lịch nghỉ dưỡng vùng cao."
+      }
+    ];
+
+    // Bộ câu hỏi đang dùng (hỗ trợ chế độ toàn bộ 30 câu hoặc chỉ luyện các câu sai)
+    let activeQuizList = [...quizData];
+    let currentIndex = 0;
+    let userAnswers = {}; // { 0: 'A', 1: 'B', ... }
+    let correctTotal = 0;
+    let wrongTotal = 0;
+    let wrongQuestionsCache = []; // Danh sách các câu làm sai
+
+    // Lấy các DOM elements
+    const progressBar = document.getElementById('progressBar');
+    const questionCounter = document.getElementById('questionCounter');
+    const correctCountEl = document.getElementById('correctCount');
+    const wrongCountEl = document.getElementById('wrongCount');
+    const questionCategory = document.getElementById('questionCategory');
+    const questionTitle = document.getElementById('questionTitle');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const quizContainer = document.getElementById('quizContainer');
+    const resultCard = document.getElementById('resultCard');
+    const footerNav = document.getElementById('footerNav');
+    const btnRestart = document.getElementById('btnRestart');
+    const btnRetryWrong = document.getElementById('btnRetryWrong');
+    const wrongRetryCount = document.getElementById('wrongRetryCount');
+    const btnQuickRestart = document.getElementById('btnQuickRestart');
+    const btnShare = document.getElementById('btnShare');
+    const btnClose = document.getElementById('btnClose');
+    const toast = document.getElementById('toast');
+
+    // Render câu hỏi hiện tại
+    function renderQuestion(index) {
+      if (index >= activeQuizList.length) {
+        showFinalResult();
+        return;
+      }
+
+      quizContainer.classList.remove('hidden');
+      resultCard.classList.add('hidden');
+      footerNav.classList.remove('hidden');
+
+      const data = activeQuizList[index];
+      const answeredKey = userAnswers[index];
+      const isAnswered = answeredKey !== undefined;
+
+      // Cập nhật Header
+      const percent = ((index + 1) / activeQuizList.length) * 100;
+      progressBar.style.width = `${percent}%`;
+      questionCounter.innerText = `${index + 1}/${activeQuizList.length}`;
+
+      questionCategory.innerText = data.category;
+      questionTitle.innerText = `Câu ${index + 1}: ${data.question}`;
+
+      // Xoá danh sách lựa chọn cũ
+      optionsContainer.innerHTML = '';
+
+      // Render 4 options theo chuẩn giao diện Quizlet như ảnh mẫu
+      data.options.forEach(opt => {
+        const optionBox = document.createElement('div');
+        optionBox.className = `option-card w-full rounded-2xl p-4 sm:p-5 border text-left cursor-pointer transition select-none flex flex-col justify-between `;
+
+        const isThisSelected = isAnswered && answeredKey === opt.key;
+        const isThisCorrect = opt.key === data.correctKey;
+
+        // Trạng thái trước và sau khi chọn đáp án
+        if (!isAnswered) {
+          // Chưa chọn
+          optionBox.className += `bg-[#181b20] border-slate-800 hover:border-slate-600 hover:bg-[#20252c]`;
+          optionBox.onclick = () => selectAnswer(index, opt.key);
+
+          optionBox.innerHTML = `
+            <div class="flex items-start gap-3">
+              <span class="font-bold text-slate-300 text-base sm:text-lg min-w-[24px]">${opt.key}.</span>
+              <span class="text-slate-200 text-sm sm:text-base leading-snug">${opt.text}</span>
+            </div>
+          `;
+        } else {
+          // Đã chọn: phân loại hiển thị ĐÚNG / SAI
+          if (isThisCorrect) {
+            // Đáp án ĐÚNG (màu xanh lá)
+            optionBox.className += `bg-[#0e2217] border-[#1f5e3b] text-white`;
+            optionBox.innerHTML = `
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start gap-3">
+                  <span class="font-bold text-emerald-400 text-base sm:text-lg min-w-[24px]">${opt.key}.</span>
+                  <span class="font-medium text-slate-100 text-sm sm:text-base leading-snug">${opt.text}</span>
+                </div>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1e462e] text-[#4ade80] text-xs font-semibold shrink-0">
+                  <svg class="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  Câu trả lời chính xác
+                </span>
+              </div>
+              <!-- Phần giải thích chi tiết đáp án đúng -->
+              <div class="mt-3 pt-3 border-t border-emerald-900/60 text-xs sm:text-sm text-emerald-200/90 leading-relaxed pl-8">
+                <span class="font-semibold text-emerald-300">💡 Giải thích: </span>${data.explain}
+              </div>
+            `;
+          } else if (isThisSelected && !isThisCorrect) {
+            // Đáp án bạn chọn nhưng BỊ SAI (màu đỏ)
+            optionBox.className += `bg-[#241316] border-[#6b1e25] text-white`;
+            optionBox.innerHTML = `
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start gap-3">
+                  <span class="font-bold text-red-400 text-base sm:text-lg min-w-[24px]">${opt.key}.</span>
+                  <span class="font-medium text-slate-200 text-sm sm:text-base leading-snug">${opt.text}</span>
+                </div>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#4c1d24] text-[#f87171] text-xs font-semibold shrink-0">
+                  <svg class="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                  Không chính xác (Câu trả lời của bạn)
+                </span>
+              </div>
+              <div class="mt-3 pt-3 border-t border-red-950 text-xs sm:text-sm text-red-300/80 leading-relaxed pl-8">
+                Lựa chọn này chưa chính xác. Hãy quan sát đáp án đúng màu xanh và phần diễn giải chi tiết nhé.
+              </div>
+            `;
+          } else {
+            // Các đáp án sai khác không được chọn -> làm mờ nhẹ
+            optionBox.className += `bg-[#14161a] border-slate-800/80 opacity-50 cursor-default`;
+            optionBox.innerHTML = `
+              <div class="flex items-start gap-3">
+                <span class="font-semibold text-slate-400 text-base sm:text-lg min-w-[24px]">${opt.key}.</span>
+                <span class="text-slate-400 text-sm sm:text-base leading-snug">${opt.text}</span>
+              </div>
+            `;
+          }
+        }
+
+        optionsContainer.appendChild(optionBox);
+      });
+
+      // Cập nhật trạng thái nút Quay lại & Tiếp theo
+      btnPrev.disabled = index === 0;
+      if (index === activeQuizList.length - 1) {
+        btnNext.innerHTML = `Xem kết quả <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
+      } else {
+        btnNext.innerHTML = `Tiếp theo <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
+      }
+    }
+
+    // Xử lí khi người dùng bấm chọn đáp án
+    function selectAnswer(questionIdx, selectedKey) {
+      if (userAnswers[questionIdx] !== undefined) return; // Đã trả lời thì khoá câu này
+
+      userAnswers[questionIdx] = selectedKey;
+      const currentQ = activeQuizList[questionIdx];
+
+      if (selectedKey === currentQ.correctKey) {
+        correctTotal++;
+      } else {
+        wrongTotal++;
+        if (!wrongQuestionsCache.some(q => q.id === currentQ.id)) {
+          wrongQuestionsCache.push(currentQ);
+        }
+      }
+
+      // Cập nhật counter
+      correctCountEl.innerText = correctTotal;
+      wrongCountEl.innerText = wrongTotal;
+
+      // Render lại câu hiện tại để hiển thị hiệu ứng badge & giải thích
+      renderQuestion(questionIdx);
+    }
+
+    // Hiển thị màn hình kết quả sau khi làm hết câu hỏi
+    function showFinalResult() {
+      quizContainer.classList.add('hidden');
+      resultCard.classList.remove('hidden');
+      footerNav.classList.add('hidden'); // Ẩn footer khi đã ra trang kết quả
+
+      document.getElementById('finalCorrect').innerText = correctTotal;
+      document.getElementById('finalWrong').innerText = wrongTotal;
+      document.getElementById('resultSubtitle').innerText = `Bạn đã hoàn thành ${activeQuizList.length} câu hỏi trắc nghiệm ôn tập.`;
+
+      const evalTitle = document.getElementById('evalTitle');
+      const evalDesc = document.getElementById('evalDesc');
+      const finalPercentage = document.getElementById('finalPercentage');
+
+      const percent = Math.round((correctTotal / activeQuizList.length) * 100);
+      finalPercentage.innerText = `${percent}%`;
+
+      if (percent >= 90) {
+        evalTitle.innerText = "Xuất sắc! (Đạt 9 - 10 điểm)";
+        evalDesc.innerText = "Bạn đã nắm cực kì vững vàng toàn bộ kiến thức Chương 1 Địa lí 8. Hoàn toàn tự tin để đạt điểm tối đa trong bài thi giữa kì 1!";
+      } else if (percent >= 70) {
+        evalTitle.innerText = "Rất tốt! (Đạt 7 - 8 điểm)";
+        evalDesc.innerText = "Bạn đã làm chủ phần lớn kiến thức trọng tâm. Bạn có thể luyện lại các câu sai để nhớ kĩ hơn các phần còn nhầm lẫn nhé!";
+      } else {
+        evalTitle.innerText = "Cần ôn tập thêm!";
+        evalDesc.innerText = "Hãy bấm 'Làm lại từ đầu' hoặc 'Luyện lại riêng các câu sai' để làm quen và ghi nhớ chính xác các khái niệm nhé!";
+      }
+
+      // Cấu hình nút Luyện lại câu sai
+      if (wrongQuestionsCache.length > 0) {
+        btnRetryWrong.classList.remove('hidden');
+        wrongRetryCount.innerText = wrongQuestionsCache.length;
+      } else {
+        btnRetryWrong.classList.add('hidden');
+      }
+    }
+
+    // Nút Tiếp theo
+    btnNext.addEventListener('click', () => {
+      if (currentIndex < activeQuizList.length - 1) {
+        currentIndex++;
+        renderQuestion(currentIndex);
+      } else {
+        // Đang ở câu cuối cùng -> sang màn hình tổng kết
+        showFinalResult();
+      }
+    });
+
+    // Nút Quay lại
+    btnPrev.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion(currentIndex);
+      }
+    });
+
+    // Reset toàn bộ 30 câu từ đầu
+    function resetAllQuiz() {
+      activeQuizList = [...quizData];
+      currentIndex = 0;
+      userAnswers = {};
+      correctTotal = 0;
+      wrongTotal = 0;
+      wrongQuestionsCache = [];
+      correctCountEl.innerText = "0";
+      wrongCountEl.innerText = "0";
+      renderQuestion(0);
+    }
+
+    // Luyện tập riêng các câu làm sai
+    function retryWrongQuestionsOnly() {
+      if (wrongQuestionsCache.length === 0) return;
+      activeQuizList = [...wrongQuestionsCache];
+      currentIndex = 0;
+      userAnswers = {};
+      correctTotal = 0;
+      wrongTotal = 0;
+      wrongQuestionsCache = [];
+      correctCountEl.innerText = "0";
+      wrongCountEl.innerText = "0";
+      renderQuestion(0);
+    }
+
+    // Gắn sự kiện các nút Làm lại
+    btnRestart.addEventListener('click', resetAllQuiz);
+    btnRetryWrong.addEventListener('click', retryWrongQuestionsOnly);
+    btnQuickRestart.addEventListener('click', () => {
+      if (confirm("Bạn có muốn làm lại từ câu hỏi đầu tiên không?")) {
+        resetAllQuiz();
+      }
+    });
+    btnClose.addEventListener('click', () => {
+      if (confirm("Bạn có muốn bắt đầu lại bài thi không?")) {
+        resetAllQuiz();
+      }
+    });
+
+    // Nút chia sẻ (sao chép link)
+    btnShare.addEventListener('click', () => {
+      try {
+        const dummy = document.createElement('input');
+        document.body.appendChild(dummy);
+        dummy.value = window.location.href;
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
+
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 2500);
+      } catch (e) {
+        console.log(e);
+      }
+    });
+
+    // Khởi tạo ứng dụng khi tải trang
+    window.onload = function() {
+      renderQuestion(0);
+    };
+  </script>
+</body>
+</html>
